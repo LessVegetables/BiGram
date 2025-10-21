@@ -1,1 +1,3 @@
 nltk==3.9.1
+pyTelegramBotAPI
+python-dotenv
