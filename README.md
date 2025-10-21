@@ -1,5 +1,5 @@
 # BiGram
-$$Project Class 25-26 • Week 1
+Project Class 25-26 • Week 1
 
 ## Quick Demo
 You can run this n-Gram model (and provide feedback!) in my Telegram bot: [@dfg_bigram_project_bot](https://t.me/dfg_bigram_project_bot)
