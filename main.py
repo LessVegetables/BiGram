@@ -20,6 +20,7 @@ pending_messages = {}
 
 # --- SQLite setup ---
 conn = sqlite3.connect(db_path, check_same_thread=False)
+conn.execute('PRAGMA journal_mode=WAL;')
 c = conn.cursor()
 c.execute("""CREATE TABLE IF NOT EXISTS ratings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
