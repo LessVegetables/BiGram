@@ -23,6 +23,7 @@ conn = sqlite3.connect(db_path, check_same_thread=False)
 c = conn.cursor()
 c.execute("""CREATE TABLE IF NOT EXISTS ratings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    gram INTEGER NOT NULL,
     message TEXT NOT NULL,
     rating INTEGER NOT NULL
 )""")
@@ -65,12 +66,16 @@ def buttons(msg):
 @bot.message_handler(func=lambda m: True)
 def echo_all(msg):
     if msg.text == "1-gram":
+        gram = 1
         generated_text = generate_sentence(model_1, 1, min_len, max_sentence_len=max_len)
     elif msg.text == "Bigram":
+        gram = 2
         generated_text = generate_sentence(model_2, 2, min_len, max_sentence_len=max_len)
     elif msg.text == "3-gram":
+        gram = 3
         generated_text = generate_sentence(model_3, 3, min_len, max_sentence_len=max_len)
     elif msg.text == "4-gram":
+        gram = 4
         generated_text = generate_sentence(model_4, 4, min_len, max_sentence_len=max_len)
     else:
         bot.reply_to(msg, f"I don't have that one yet :(")
@@ -91,7 +96,7 @@ def echo_all(msg):
         # remove the first inserted key (oldest)
         oldest_key = next(iter(pending_messages))
         pending_messages.pop(oldest_key)
-    pending_messages[sent_msg.message_id] = generated_text
+    pending_messages[sent_msg.message_id] = (generated_text, gram)
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("rate:"))
@@ -103,7 +108,7 @@ def handle_rating(call):
         return
 
     msg_id = call.message.message_id
-    text = pending_messages.get(msg_id)
+    text, gram = pending_messages.get(msg_id)
 
     # Handle missing message safely
     if not text:
@@ -112,7 +117,7 @@ def handle_rating(call):
 
     # Save to SQLite
     try:
-        c.execute("INSERT INTO ratings (message, rating) VALUES (?, ?)", (text, rating))
+        c.execute("INSERT INTO ratings (gram, message, rating) VALUES (?, ?, ?)", (gram, text, rating))
         conn.commit()
     except Exception as e:
         print("DB error:", e)
