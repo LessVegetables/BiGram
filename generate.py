@@ -8,6 +8,8 @@ from nltk.tokenize import word_tokenize
 from pathlib import Path
 import pickle
 
+from prob import sentence_logprob, sentence_perplexity, sentence_probability
+
 
 
 def load_model(path):
@@ -130,4 +132,13 @@ if __name__ == "__main__":
         print(f"Loaded {n}-gram model from {model_path}")
 
         for i in range(num_lines):
-            print(f"{i+1}:", generate_sentence(model, n, min_len, max_sentence_len=max_len))
+            s = generate_sentence(model, n, min_len, max_sentence_len=max_len)
+            print(f"{i+1}:", s)
+                
+            lp = sentence_logprob(model, n, s)
+            p = sentence_probability(model, n, s)
+            ppl = sentence_perplexity(model, n, s)
+            print(f"    log P = {lp:.4f}")
+            print(f"    P     = {p:.6e}")
+            print(f"    ppl   = {ppl:.3f}")
+            print()
