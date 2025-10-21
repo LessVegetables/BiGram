@@ -11,6 +11,11 @@ load_dotenv()
 bot = TeleBot(os.getenv("BOT_TOKEN"))
 db_path = os.getenv("DB_PATH")
 
+bot.set_my_commands([
+    types.BotCommand("start", "Start the bot and choose an n-gram"),
+    types.BotCommand("help", "Show usage information"),
+])
+
 pending_messages = {}
 
 # --- SQLite setup ---
@@ -46,7 +51,7 @@ def escape_markdown(text: str, version: int = 2) -> str:
 
 @bot.message_handler(commands=['help'])
 def send_welcome(msg):
-    bot.reply_to(msg, "I’m a simple bigram bot.\nMore info: https://github.com/LessVegetables/BiGram\nWhat would you like me to generate?")
+    bot.reply_to(msg, "I’m a simple bigram bot.\nMore info: https://github.com/LessVegetables/BiGram\nClick \\start")
 
 
 @bot.message_handler(commands=['start'])
